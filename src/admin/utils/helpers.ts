@@ -1,6 +1,8 @@
 import * as MediaUtils from "@paperbits/common/media/mediaUtils";
 import { MediaContract } from "@paperbits/common/media";
 import { Operator, Query } from "@paperbits/common/persistence";
+import { validateField } from "./validator";
+import { MapiBlobStorage } from "../../persistence";
 
 export const getThumbnailUrl = (mediaItem: MediaContract): string => {
     if (mediaItem?.mimeType?.startsWith("video")) {
@@ -46,4 +48,23 @@ export const createSearchQuery = (searchPattern: string, fieldName: string = 'ti
     }
 
     return query;
+}
+
+export const handleFormSubmission = async (formData: any): Promise<void> => {
+    const blobStorage = new MapiBlobStorage();
+    const content = new TextEncoder().encode(JSON.stringify(formData));
+    await blobStorage.uploadBlob(`api-access-requests/${Date.now()}.json`, content);
+}
+
+export const validateFormFields = (formData: any): any => {
+    const errors: any = {};
+
+    errors.name = validateField('required', formData.name);
+    errors.email = validateField('required', formData.email);
+    errors.organization = validateField('required', formData.organization);
+    errors.apiName = validateField('required', formData.apiName);
+    errors.description = validateField('required', formData.description);
+    errors.termsAccepted = formData.termsAccepted ? '' : 'You must accept the terms of use';
+
+    return errors;
 }

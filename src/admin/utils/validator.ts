@@ -2,11 +2,15 @@ export const REQUIRED = "required";
 export const UNIQUE_REQUIRED = "unique-required";
 export const URL = "url";
 export const URL_REQUIRED = "url-required";
+export const EMAIL = "email";
+export const TERMS_ACCEPTED = "terms-accepted";
 
 export const REQUIRED_MESSAGE = "This field is required";
 export const UNIQUE_REQUIRED_MESSAGE = "Field value is required and must be unique";
 export const URL_MESSAGE = "Field value should be a valid URL";
 export const URL_REQUIRED_MESSAGE = "Field value is required and should be a valid URL";
+export const EMAIL_MESSAGE = "Field value should be a valid email address";
+export const TERMS_ACCEPTED_MESSAGE = "You must accept the terms of use";
 
 export const validateField = (validationType: string, value: string, customValidation?: boolean): string => {
     if (value === undefined) return;
@@ -16,6 +20,7 @@ export const validateField = (validationType: string, value: string, customValid
 
     const absoluteUrlRegex = /^(?:https?:\/\/)?(?:[\w-]+\.)*[\w.-]+\.[a-zA-Z]{2,}(?:\/[\w-.~:/?#[\]@!$&'()*+,;=%]*)?$/;
     const relativeUrlRegex = /^(?:\/|#)[\w-.~:/?#[\]@!$&'()*+,;=%]*$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isNotEmpty = value.length > 0 && value.trim().length > 0;
 
     switch (validationType) {
@@ -34,6 +39,14 @@ export const validateField = (validationType: string, value: string, customValid
         case URL_REQUIRED:
             isValid = isNotEmpty && (absoluteUrlRegex.test(value) || relativeUrlRegex.test(value));
             errorMessage = isValid ? "" : URL_REQUIRED_MESSAGE;
+            break;
+        case EMAIL:
+            isValid = emailRegex.test(value);
+            errorMessage = isValid ? "" : EMAIL_MESSAGE;
+            break;
+        case TERMS_ACCEPTED:
+            isValid = value === true;
+            errorMessage = isValid ? "" : TERMS_ACCEPTED_MESSAGE;
             break;
     }
 
