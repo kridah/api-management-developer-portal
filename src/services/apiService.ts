@@ -550,4 +550,19 @@ export class ApiService {
 
         return hostnameValues;
     }
+
+    /**
+     * Fetches health check data from the backend.
+     */
+    public async getHealthCheckData(): Promise<HealthCheckData> {
+        const healthCheckData = await this.mapiClient.get<HealthCheckData>("/healthcheck", [await this.mapiClient.getPortalHeader("getHealthCheckData")]);
+        return healthCheckData;
+    }
+}
+
+export interface HealthCheckData {
+    status: string;
+    uptimePercentage: number;
+    timestamp: Date;
+    message?: string;
 }
